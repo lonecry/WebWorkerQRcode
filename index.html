@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>纯JavaScript生成二维码</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="creator.css">
+
+</head>
+<body>
+    <h2>Web Worker生成二维码</h2>
+    <textarea id="qrUrl" >Web Worker生成二维码</textarea>
+
+    <p>
+        纠错级别:
+        <select id="ecclevel">
+            <option value="1">L水平 7% 的字码可被修正</option>
+            <option value="2">M水平 15% 的字码可被修正</option>
+            <option value="3">Q水平 25% 的字码可被修正</option>
+            <option value="4">H水平 30% 的字码可被修正</option>
+        </select>
+    </p>
+    <button onclick="createQR();">点我生成二维码</button>
+    <canvas id="code"></canvas>
+</body>
+</html>
+<script>
+
+    function utf16to8(str) {// 中文编码问题
+        var out, i, len, c;
+        out = "";
+        len = str.length;
+        for (i = 0; i < len; i++) {
+            c = str.charCodeAt(i);
+            if ((c >= 0x0001) && (c <= 0x007F)) {
+                out += str.charAt(i);
+            } else if (c > 0x07FF) {
+                out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+                out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+                out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+            } else {
+                out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+                out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+            }
+        }
+        return out;
+    }
+    //二维码详细信息
+    var qrUrl = document.getElementById("qrUrl");//具体内容(节点)
+    var ecclevel = document.getElementById("ecclevel");//纠错等级
+
+    function createQR ()  {//生成二维码方法
+
+        var t1,t2;
+        t1 = new Date();
+
+
+        var worker = new Worker("SunWenQR.js");
+        var pre = new Object({//实例化一个对象   默认的静态(关闭了)
+        });
+        pre.url = utf16to8(qrUrl.value);//具体内容(从节点取值)
+        pre.colorLight = "#FFFFFF"; //背景色代码
+        pre.colorDark = "#000000"; //前景色代码
+        pre.ecclevel = ecclevel.value;//输出类型
+
+        worker.postMessage(pre);
+        console.log("打包发给worker子线程"+pre);
+        worker.onmessage = function(e) {
+
+            console.log("收到worker子线程发来的结果");
+            var width = Math.sqrt(e.data.length);
+            var  qf = e.data;
+            canvasWrite(qf, width);
+            worker.terminate();
+            function canvasWrite(qf, width) {
+
+                //Setup canvas context
+                var size = 200;
+                var qrc = document.getElementById("code").getContext("2d");
+
+                qrc.canvas.width = qrc.canvas.height = size;
+                qrc.clearRect(0,0,size,size);
+
+                var px=Math.round(size/width);
+
+                //每一行用fillRect 填充
+                for( var i = 0; i < width; i++ ) {
+                    for( var j = 0; j < width; j++ ) {
+                        if( qf[i*width+j] ) {
+                            qrc.fillRect(px*i,px*j,px,px);
+                        }
+                    }
+                }
+
+            }
+            worker.terminate();
+            t2 =  new Date();
+            console.log("总共花了"+(t2-t1)+"毫秒");
+        };
+
+    }
+</script>
