@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>纯JavaScript生成二维码</title>
+    <title>Web Worker生成二维码</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="creator.css">
@@ -9,8 +9,7 @@
 </head>
 <body>
     <h2>Web Worker生成二维码</h2>
-    <textarea id="qrUrl" >Web Worker生成二维码</textarea>
-
+    <textarea id="qrUrl" >Hello World,I am QR code!</textarea>
     <p>
         纠错级别:
         <select id="ecclevel">
@@ -22,6 +21,7 @@
     </p>
     <button onclick="createQR();">点我生成二维码</button>
     <canvas id="code"></canvas>
+    <p id="p1" style="color: #18a305;font-size: 16px"></p>
 </body>
 </html>
 <script>
@@ -51,34 +51,29 @@
 
     function createQR ()  {//生成二维码方法
 
-        var t1,t2;
+        var t1,t2,t3,t4;
         t1 = new Date();
-
-
         var worker = new Worker("SunWenQR.js");
-        var pre = new Object({//实例化一个对象   默认的静态(关闭了)
-        });
+
+        var pre = new Object({});
         pre.url = utf16to8(qrUrl.value);//具体内容(从节点取值)
         pre.colorLight = "#FFFFFF"; //背景色代码
         pre.colorDark = "#000000"; //前景色代码
         pre.ecclevel = ecclevel.value;//输出类型
 
         worker.postMessage(pre);
-        console.log("打包发给worker子线程"+pre);
-        worker.onmessage = function(e) {
 
-            console.log("收到worker子线程发来的结果");
+        worker.onmessage = function(e) {
             var width = Math.sqrt(e.data.length);
             var  qf = e.data;
             canvasWrite(qf, width);
-            worker.terminate();
+            //
             function canvasWrite(qf, width) {
-
-                //Setup canvas context
+                t3 = new Date();
+                //设置画布
                 var size = 200;
                 var qrc = document.getElementById("code").getContext("2d");
-
-                qrc.canvas.width = qrc.canvas.height = size;
+                qrc.canvas.width = qrc.canvas.height = size+10;
                 qrc.clearRect(0,0,size,size);
 
                 var px=Math.round(size/width);
@@ -91,11 +86,12 @@
                         }
                     }
                 }
-
+                t4 = new Date();
             }
-            worker.terminate();
             t2 =  new Date();
-            console.log("总共花了"+(t2-t1)+"毫秒");
+            console.log("canvas渲染花了"+(t4-t3)+"毫秒");
+            console.log("总共用时"+(t2-t1)+"毫秒");
+            document.getElementById("p1").innerHTML="====  渲染   "+(t4-t3)+"   毫秒   ========   总 共   "+(t2-t1)+"   毫秒   ====";
         };
 
     }
