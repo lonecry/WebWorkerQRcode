@@ -1,12 +1,15 @@
 
 self.onmessage = function (e){
-    console.log('worker子线程收到：'+e);
+
+
+    console.log("<--worker线程接受到时间戳");
     var qr = new SunWenQR({});//实例化一个对象
     qr.url = e.data.url;//具体内容(从节点取值)
-    qr.colorLight = e.data.colorLight;//背景色代码
-    qr.colorDark = e.data.colorDark;//前景色代码
+    qr.colorLight = "#FFFFFF";//背景色代码
+    qr.colorDark = "#000000";//前景色代码
     qr.ecclevel = e.data.ecclevel;//纠错等级
     var code = qr.init();//初始化
+    console.log("<--发送到主线程时间戳");
     self.postMessage(code);
     self.close();
     function SunWenQR( customize ) {
