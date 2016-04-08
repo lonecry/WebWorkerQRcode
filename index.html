@@ -24,7 +24,7 @@
     <p id="p1" style="color: #18a305;font-size: 16px"></p>
 </body>
 </html>
-<script>
+<script type="text/javascript" charset="utf-8">
 
     function utf16to8(str) {// 中文编码问题
         var out, i, len, c;
@@ -47,29 +47,33 @@
     }
     //二维码详细信息
     var qrUrl = document.getElementById("qrUrl");//具体内容(节点)
-    var ecclevel = document.getElementById("ecclevel");//纠错等级
+    var qrecclevel = document.getElementById("ecclevel");//纠错等级
 
     function createQR ()  {//生成二维码方法
 
-        var t1,t2,t3,t4;
+        var t1,t2,t3;
         t1 = new Date();
         var worker = new Worker("SunWenQR.js");
-
-        var pre = new Object({});
+        var pre = Object();
         pre.url = utf16to8(qrUrl.value);//具体内容(从节点取值)
-        pre.colorLight = "#FFFFFF"; //背景色代码
-        pre.colorDark = "#000000"; //前景色代码
-        pre.ecclevel = ecclevel.value;//输出类型
+        pre.ecclevel = qrecclevel.value;//输出类型
+
+        /*var pre={
+         url : utf16to8(qrUrl.value.toString()),//具体内容(从节点取值)
+         ecclevel :qrecclevel.value//输出类型
+        };*/
+        console.log("<--发送到worker线程时间戳");
 
         worker.postMessage(pre);
-
         worker.onmessage = function(e) {
+
+            console.log("<--主线程收到时间戳");
+
             var width = Math.sqrt(e.data.length);
-            var  qf = e.data;
+            var qf = e.data;
             canvasWrite(qf, width);
-            //
             function canvasWrite(qf, width) {
-                t3 = new Date();
+                t2 = new Date();
                 //设置画布
                 var size = 200;
                 var qrc = document.getElementById("code").getContext("2d");
@@ -86,12 +90,11 @@
                         }
                     }
                 }
-                t4 = new Date();
+                t3 = new Date();
             }
-            t2 =  new Date();
-            console.log("canvas渲染花了"+(t4-t3)+"毫秒");
-            console.log("总共用时"+(t2-t1)+"毫秒");
-            document.getElementById("p1").innerHTML="====  渲染   "+(t4-t3)+"   毫秒   ========   总 共   "+(t2-t1)+"   毫秒   ====";
+            console.log("canvas渲染花了"+(t3-t2)+"毫秒");
+            console.log("总共用时"+(t3-t1)+"毫秒");
+            document.getElementById("p1").innerHTML="====  渲染   "+(t3-t2)+"   毫秒   ========   总 共   "+(t3-t1)+"   毫秒   ====";
         };
 
     }
