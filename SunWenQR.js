@@ -1,10 +1,31 @@
 
-self.onmessage = function (e){
 
+
+function utf16to8(str) {// 中文编码问题
+    var out, i, len, c;
+    out = "";
+    len = str.length;
+    for (i = 0; i < len; i++) {
+        c = str.charCodeAt(i);
+        if ((c >= 0x0001) && (c <= 0x007F)) {
+            out += str.charAt(i);
+        } else if (c > 0x07FF) {
+            out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+            out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+            out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+        } else {
+            out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+            out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+        }
+    }
+    return out;
+}
+
+self.onmessage = function (e){
 
     console.log("<--worker线程接受到时间戳");
     var qr = new SunWenQR({});//实例化一个对象
-    qr.url = e.data.url;//具体内容(从节点取值)
+    qr.url =utf16to8(e.data.url);//具体内容(从节点取值)
     qr.colorLight = "#FFFFFF";//背景色代码
     qr.colorDark = "#000000";//前景色代码
     qr.ecclevel = e.data.ecclevel;//纠错等级
