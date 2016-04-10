@@ -31,9 +31,7 @@
     var qrecclevel = document.getElementById("ecclevel");//纠错等级
 
     function createQR ()  {//生成二维码方法
-
-        var t1,t2,t3;
-        t1 = new Date();
+        console.time('总共用时');
         var worker = new Worker("SunWenQR.js");
         var pre = Object();
         pre.url = qrUrl.value;//具体内容(从节点取值)
@@ -51,7 +49,6 @@
             canvasWrite(qf, width);
             function canvasWrite(qf, width) {
                 console.time('渲染用时');
-                t2 = new Date();
                 //设置画布
                 var size = 200;
                 var qrc = document.getElementById("code").getContext("2d");
@@ -68,11 +65,11 @@
                         }
                     }
                 }
-                t3 = new Date();
+
             }
             console.timeEnd('渲染用时');
-            console.log("总共用时"+(t3-t1)+"ms");
-            document.getElementById("p1").innerHTML="====  渲染   "+(t3-t2)+"   毫秒   ========   总 共   "+(t3-t1)+"   毫秒   ====";
+            console.timeEnd('总共用时');
+//          document.getElementById("p1").innerHTML="====  渲染   "+(t3-t2)+"   毫秒   ========   总 共   "+(t3-t1)+"   毫秒   ====";
         };
 
     }

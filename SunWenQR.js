@@ -22,9 +22,11 @@ function utf16to8(str) {// 中文编码问题
 }
 
 self.onmessage = function (e){
-    var ts,te;
+    var ta,ts,te;
+    ta = e.timeStamp;
     ts = new Date();
 
+    console.log('   主线程到worker线程发送时间 ：'+Math.round((ts.getTime()*1000-ta)/1000)+'ms')
     console.log("2. worker线程接收到");
     var qr = new SunWenQR({});//实例化一个对象
     qr.url =utf16to8(e.data.url);//具体内容(从节点取值)
