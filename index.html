@@ -39,12 +39,12 @@
         pre.url = qrUrl.value;//具体内容(从节点取值)
         pre.ecclevel = qrecclevel.value;//输出类型
 
-        console.log("发送到worker线程");
+        console.log("1. 发送到worker线程");
 
         worker.postMessage(pre);
         worker.onmessage = function(e) {
 
-            console.log("主线程收到");
+            console.log("4. 主线程收到");
 
             var width = Math.sqrt(e.data.length);
             var qf = e.data;
