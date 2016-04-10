@@ -39,12 +39,12 @@
         pre.url = qrUrl.value;//具体内容(从节点取值)
         pre.ecclevel = qrecclevel.value;//输出类型
 
-        console.log("<--发送到worker线程时间戳");
+        console.log("发送到worker线程");
 
         worker.postMessage(pre);
         worker.onmessage = function(e) {
 
-            console.log("<--主线程收到时间戳");
+            console.log("主线程收到");
 
             var width = Math.sqrt(e.data.length);
             var qf = e.data;
@@ -71,7 +71,7 @@
                 t3 = new Date();
             }
             console.timeEnd('渲染用时');
-            console.log("总共用时"+(t3-t1)+"毫秒");
+            console.log("总共用时"+(t3-t1)+"ms");
             document.getElementById("p1").innerHTML="====  渲染   "+(t3-t2)+"   毫秒   ========   总 共   "+(t3-t1)+"   毫秒   ====";
         };
 

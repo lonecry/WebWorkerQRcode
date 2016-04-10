@@ -22,15 +22,19 @@ function utf16to8(str) {// 中文编码问题
 }
 
 self.onmessage = function (e){
+    var ts,te;
+    ts = new Date();
 
-    console.log("<--worker线程接受到时间戳");
+    console.log("worker线程接收到");
     var qr = new SunWenQR({});//实例化一个对象
     qr.url =utf16to8(e.data.url);//具体内容(从节点取值)
     qr.colorLight = "#FFFFFF";//背景色代码
     qr.colorDark = "#000000";//前景色代码
     qr.ecclevel = e.data.ecclevel;//纠错等级
     var code = qr.init();//初始化
-    console.log("<--发送到主线程时间戳");
+    console.log("发送到主线程");
+    te = new Date();
+    console.log('worker计算用时 ：'+(te - ts)+'ms');
     self.postMessage(code);
     self.close();
     function SunWenQR( customize ) {
