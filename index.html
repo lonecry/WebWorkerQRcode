@@ -36,7 +36,7 @@
         var pre = Object();
         pre.url = qrUrl.value;//具体内容(从节点取值)
         pre.ecclevel = qrecclevel.value;//输出类型
-
+        pre.time = new Date().getTime()*1000;
         console.log("1. 发送到worker线程");
 
         worker.postMessage(pre);
