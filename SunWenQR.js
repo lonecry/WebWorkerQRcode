@@ -23,9 +23,8 @@ function utf16to8(str) {// 中文编码问题
 
 self.onmessage = function (e){
     var ts,te;
-    ts = e.timeStamp;
-
-    console.log('   主线程到worker线程发送时间 ：'+Math.round(( ts - e.data.time)/1000)+'ms')
+    ts = new  Date();
+    console.log('   主线程到worker线程发送时间 ：'+Math.round(( ts - e.data.time))+'ms');
     console.log("2. worker线程接收到");
     var qr = new SunWenQR({});//实例化一个对象
     qr.url =utf16to8(e.data.url);//具体内容(从节点取值)
@@ -35,7 +34,7 @@ self.onmessage = function (e){
     var code = qr.init();//初始化
     console.log("3. 发送到主线程");
     te = new Date();
-    console.log('   worker计算用时 ：'+(te - ts/1000)+'ms');
+    console.log('   worker计算用时 ：'+(te - ts)+'ms');
     self.postMessage(code);
     self.close();
     function SunWenQR( customize ) {

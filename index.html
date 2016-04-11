@@ -8,7 +8,7 @@
 </head>
 <body>
     <h2>Web Worker生成二维码</h2>
-    <textarea id="qrUrl" >Hello World,I am QR code!</textarea>
+    <textarea id="qrUrl" >http://www.baidu.com</textarea>
     <p>
         纠错级别:
         <select id="ecclevel">
@@ -36,7 +36,7 @@
         var pre = Object();
         pre.url = qrUrl.value;//具体内容(从节点取值)
         pre.ecclevel = qrecclevel.value;//输出类型
-        pre.time = new Date().getTime()*1000;
+        pre.time = new Date();
         console.log("1. 发送到worker线程");
 
         worker.postMessage(pre);
