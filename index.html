@@ -31,12 +31,18 @@
 
     function createQR ()  {//生成二维码方法
         console.time('总共用时');
+        console.time('create');
+
         var worker = new Worker("SunWenQR.js");
+        console.timeEnd('create');
+
         var pre = Object();
         pre.url = qrUrl.value;//具体内容(从节点取值)
         pre.ecclevel = qrecclevel.value;//输出类型
         pre.time = new Date();
         console.log("1. 发送到worker线程");
+
+        console.time('send');
 
         worker.postMessage(pre);
         worker.onmessage = function(e) {
@@ -49,14 +55,14 @@
             function canvasWrite(qf, width) {
                 console.time('渲染用时');
                 //设置画布
-                var size = 400;
+                var size = 600;
                 var qrc = document.getElementById("code").getContext("2d");
-                qrc.canvas.width = qrc.canvas.height = size+10;
+                qrc.canvas.width = qrc.canvas.height = size;
                 qrc.clearRect(0,0,size,size);
 
                 var px=Math.round(size/width);
 
-                //每一行用fillRect 填充
+                //每一行用fillRect 填充 g = Math.ceil((i + 1) * b) - Math.floor(i * b)
                 for( var i = 0; i < width; i++ ) {
                     for( var j = 0; j < width; j++ ) {
                         if( qf[i*width+j] ) {

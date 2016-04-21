@@ -22,6 +22,8 @@ function utf16to8(str) {// 中文编码问题
 }
 
 self.onmessage = function (e){
+    console.timeEnd('send');
+
     var ts,te;
     ts = new  Date();
     console.log('   主线程到worker线程发送时间 ：'+Math.round(( ts - e.data.time))+'ms');
@@ -47,7 +49,6 @@ self.onmessage = function (e){
             this.url = customize.url || "";
 
             //画布默认的宽度高度。
-            this.size  = (customize.size  || 200);
 
             //QR 颜色
             this.colorLight = customize.colorLight || '#fff';
