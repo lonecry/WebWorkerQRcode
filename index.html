@@ -49,7 +49,7 @@
             function canvasWrite(qf, width) {
                 console.time('渲染用时');
                 //设置画布
-                var size = 200;
+                var size = 400;
                 var qrc = document.getElementById("code").getContext("2d");
                 qrc.canvas.width = qrc.canvas.height = size+10;
                 qrc.clearRect(0,0,size,size);
@@ -60,7 +60,7 @@
                 for( var i = 0; i < width; i++ ) {
                     for( var j = 0; j < width; j++ ) {
                         if( qf[i*width+j] ) {
-                            qrc.fillRect(px*i,px*j,px,px);
+                            qrc.fillRect(px*j,px*i,px,px);
                         }
                     }
                 }
