@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>Web Worker生成二维码</title>
@@ -8,7 +8,7 @@
 </head>
 <body>
     <h2>Web Worker生成二维码</h2>
-    <textarea id="qrUrl" >http://www.baidu.com</textarea>
+    <textarea id="qrUrl" ></textarea>
     <p>
         纠错级别:
         <select id="ecclevel">
@@ -29,25 +29,44 @@
     var qrUrl = document.getElementById("qrUrl");//具体内容(节点)
     var qrecclevel = document.getElementById("ecclevel");//纠错等级
 
+    function utf16to8(str) {// 中文编码问题
+        var out, i, len, c;
+        out = "";
+        len = str.length;
+        for (i = 0; i < len; i++) {
+            c = str.charCodeAt(i);
+            if ((c >= 0x0001) && (c <= 0x007F)) {
+                out += str.charAt(i);
+            } else if (c > 0x07FF) {
+                out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+                out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+                out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+            } else {
+                out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+                out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+            }
+        }
+        return out;
+    }
+
     function createQR ()  {//生成二维码方法
+
         console.time('总共用时');
-        console.time('create');
 
-        var worker = new Worker("SunWenQR.js");
-        console.timeEnd('create');
+        console.time('实例化');
 
-        var pre = Object();
-        pre.url = qrUrl.value;//具体内容(从节点取值)
+        var worker = new Worker("./SunWenQR.js");//实例化一个worker 对象
+
+        console.timeEnd('实例化');
+
+
+        var pre = {};
+        pre.url = utf16to8(qrUrl.value);//具体内容(从节点取值)
         pre.ecclevel = qrecclevel.value;//输出类型
-        pre.time = new Date();
-        console.log("1. 发送到worker线程");
-
-        console.time('send');
 
         worker.postMessage(pre);
-        worker.onmessage = function(e) {
 
-            console.log("4. 主线程收到");
+        worker.onmessage = function(e) {
 
             var width = Math.sqrt(e.data.length);
             var qf = e.data;
@@ -55,14 +74,13 @@
             function canvasWrite(qf, width) {
                 console.time('渲染用时');
                 //设置画布
-                var size = 600;
+                var size = 400;
                 var qrc = document.getElementById("code").getContext("2d");
                 qrc.canvas.width = qrc.canvas.height = size;
-                qrc.clearRect(0,0,size,size);
 
-                var px=Math.round(size/width);
+                var px=size/width;
+                px = Math.round(px);
 
-                //每一行用fillRect 填充 g = Math.ceil((i + 1) * b) - Math.floor(i * b)
                 for( var i = 0; i < width; i++ ) {
                     for( var j = 0; j < width; j++ ) {
                         if( qf[i*width+j] ) {
@@ -72,10 +90,12 @@
                 }
 
             }
+
             console.timeEnd('渲染用时');
             console.timeEnd('总共用时');
-//          document.getElementById("p1").innerHTML="====  渲染   "+(t3-t2)+"   毫秒   ========   总 共   "+(t3-t1)+"   毫秒   ====";
         };
 
+
     }
+
 </script>
