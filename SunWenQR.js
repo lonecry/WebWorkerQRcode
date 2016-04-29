@@ -2,17 +2,16 @@
 self.onmessage = function (e){
 
 
-    //console.time('计算用时');
-	var  t1 ,t2;
-	t1 = new Date();
+	console.time('计算时间');
+	
     var qr = new SunWenQR();//实例化一个对象
         qr.url =(e.data.url);//具体内容(从节点取值)
         qr.colorLight = "#FFFFFF";//背景色代码
         qr.colorDark = "#000000";//前景色代码
         qr.ecclevel = e.data.ecclevel;//纠错等级
         var code = qr.init();//初始化
-	t2 = new Date();
-	console.log('计算用时：'+(t2 - t1));
+	
+	console.timeEnd('计算时间');
 
     self.postMessage(code );
     self.close();
