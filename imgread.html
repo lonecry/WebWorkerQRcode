@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title></title>
+    <style type="text/css">
+        body {
+            width: 75%;
+            margin: 0 auto;
+        }
+
+        h2 {
+            margin-left: -40px;
+            color: #15813a;
+        }
+    </style>
+</head>
+<body>
+<h2></h2>
+<div data-ng-app="myapp" data-ng-controller="myCtrl">
+
+</div>
+<script>
+    function getBase64Image(img);
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", "http://avatar.csdn.net/5/A/F/1_u012280941.jpg", true);
+    oReq.responseType = "arraybuffer";
+    oReq.onload = function (oEvent) {
+        var arrayBuffer = oReq.response;
+        if (arrayBuffer) {
+            var byteArray = new Uint8Array(arrayBuffer);
+            console.log("data1 = ", byteArray );
+        }
+
+</script>
+<a name="end"></a>
+</body>
+</html>

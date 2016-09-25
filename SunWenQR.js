@@ -1,7 +1,6 @@
 
 self.onmessage = function (e){
 
-
 	console.time('计算时间');
 	
     var qr = new SunWenQR();//实例化一个对象
@@ -10,12 +9,33 @@ self.onmessage = function (e){
         qr.colorDark = "#000000";//前景色代码
         qr.ecclevel = e.data.ecclevel;//纠错等级
         var code = qr.init();//初始化
-	
-	console.timeEnd('计算时间');
 
-    self.postMessage(code );
+	console.timeEnd('计算时间');
+    console.time('渲染用时');
+    var width = Math.sqrt(code.length);
+    var size = 130,qrSvg='';
+    var px=size/width;
+    px = Math.round(px);
+
+    qrSvg += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"  width="140" height="140">';
+
+    for (var i = 0; i < width; i++ ) {
+        for (var j = 0; j < width; j++) {
+            if (code[i*width+j]  ) {
+                qrSvg +='<rect x='+'\"'+px*j+'\"'+'y='+'\"'+px*i+'\"'+'width='+'\"'+px+'\"'+'height='+'\"'+px+'\"'+'fill="black"/>';
+            }
+        }
+    }
+    qrSvg += '</svg>';
+    console.timeEnd('渲染用时');
+
+    self.postMessage(qrSvg);
     self.close();
 
+
+    /*self.postMessage(code );
+    self.close();
+    */
     function SunWenQR( ) {
 
         //初始化二维码
