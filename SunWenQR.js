@@ -12,12 +12,14 @@ self.onmessage = function (e){
 
 	console.timeEnd('计算时间');
     console.time('渲染用时');
+
+    // 使用svg 渲染方式，后台创建SVG文件。
     var width = Math.sqrt(code.length);
-    var size = 130,qrSvg='';
+    var size =400;var qrSvg='';
     var px=size/width;
     px = Math.round(px);
 
-    qrSvg += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"  width="140" height="140">';
+    qrSvg += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"  width="400" height="400">';
 
     for (var i = 0; i < width; i++ ) {
         for (var j = 0; j < width; j++) {
@@ -44,7 +46,6 @@ self.onmessage = function (e){
             return this.genframe(this.url);
 
         };
-
 
         /*++++++++++++++++++++++++++++++PRIVATES+++++++++++++++++++++++++++++++++++++*/
         // 工作缓冲区：
@@ -352,11 +353,12 @@ self.onmessage = function (e){
 
                 k = (ecclevel - 1) * 4 + (version - 1) * 16;
 
-                neccblk1  = eccblocks[k++];   //没有var 关键字，全局变量
+                neccblk1  = eccblocks[k++];   //没有var关键字，全局变量
                 neccblk2  = eccblocks[k++];
                 datablkw  = eccblocks[k++];
                 eccblkwid = eccblocks[k];
                 k = datablkw * (neccblk1 + neccblk2) + neccblk2 - 3 + (version <= 9);
+
                 if (t <= k)
                     break;//break是结束整个循环体
             } while (version < 40);
