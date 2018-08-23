@@ -5,7 +5,7 @@ self.onmessage = function (e){
 	console.time('计算时间');
 
     var qr = new webworkerqr();//实例化一个对象
-	qr.url = (e.data.id).toString() + '|' + (e.data.has1).toString();//具体内容(从节点取值)
+	qr.url = (e.data.id).toString() + '|' + (e.data.has1).toString();//具体内容(从节点取值)字符串拼接
 	console.log('子线程二维码内容 ：' + qr.url);
 	qr.colorLight = "#FFFFFF";//背景色代码
 	qr.colorDark = "#000000";//前景色代码
