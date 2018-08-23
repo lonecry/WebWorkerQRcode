@@ -1,126 +1,121 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Web Worker生成二维码</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="creator.css">
+	<title>Web Worker生成二维码</title>
+	<meta charset = "UTF-8">
+	<meta name = "viewport" content = "width=device-width">
+	<link rel = "stylesheet" href = "creator.css">
 </head>
 <body>
-    <div id="header">
-        <br/>
-        <h2>Web Workers多线程生成二维码</h2>
-        <textarea id="qrUrl" ></textarea>
-        <p>
-            纠错级别:
-            <select id="ecclevel">
-                <option value="1">L水平 7% 的码字可被修正</option>
-                <option value="2">M水平 15% 的码字可被修正</option>
-                <option value="3">Q水平 25% 的码字可被修正</option>
-                <option value="4">H水平 30% 的码字可被修正</option>
-            </select>
-        </p>
-        <button onclick="createQR();">生成二维码</button>
-        <div id="code"></div>
-    </div>
+<div id = "header">
+	<br/>
+	<h2>Web Workers多线程生成二维码</h2>
+	<textarea id = "qrUrl">Hello World</textarea>
+	<p>
+		纠错级别:
+		<select id = "ecclevel">
+			<option value = "1">L水平 7% 的码字可被修正</option>
+			<option value = "2">M水平 15% 的码字可被修正</option>
+			<option value = "3">Q水平 25% 的码字可被修正</option>
+			<option value = "4">H水平 30% 的码字可被修正</option>
+		</select>
+	</p>
+	<button onclick = "createQR();">生成二维码</button>
+	<canvas id = "code"></canvas>
+</div>
 </body>
-
-<script type="text/javascript" charset="utf-8">
-
-
-    //二维码详细信息
-    var qrUrl = document.getElementById("qrUrl");//具体内容(节点)
-    var qrecclevel = document.getElementById("ecclevel");//纠错等级
-
-    function utf16to8(str) {// 中文编码问题
-        var out, i, len, c;
-        out = "";
-        len = str.length;
-        for (i = 0; i < len; i++) {
-            c = str.charCodeAt(i);
-            if ((c >= 0x0001) && (c <= 0x007F)) {
-                out += str.charAt(i);
-            } else if (c > 0x07FF) {
-                out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
-                out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
-                out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
-            } else {
-                out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
-                out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
-            }
-        }
-        return out;
-    }
-
-    function createQR ()  {//生成二维码方法
-
-        console.time('总共用时');
-
-        console.time('实例时间');
-
-        var worker = new Worker("SunWenQR.js");//实例化一个worker 对象
-
-        console.timeEnd('实例时间');
-
-
-        var pre = {};
-        pre.url = utf16to8(qrUrl.value);//具体内容(从节点取值)
-        pre.ecclevel = qrecclevel.value;//输出类型
-
-        worker.postMessage(pre);
-
-        worker.onmessage = function(e) {
-            /*  var width = Math.sqrt(e.data.length);*/
-            var qf = e.data;
-            //canvasWrite(qf, width);   //svg 渲染，用主线程
-            document.getElementById("code").innerHTML=qf;
-            /*function canvasWrite(qf, width) {//CAnvas渲染方式
-                console.time('渲染用时');
-                //设置画布
-                var size = 300;
-                var qrc = document.getElementById("code").getContext("2d");
-                qrc.canvas.width = qrc.canvas.height = size;
-
-                var px=size/width;
-                px = Math.round(px);
-
-                for( var i = 0; i < width; i++ ) {
-                    for( var j = 0; j < width; j++ ) {
-                        if( qf[i*width+j] ) {
-                            qrc.fillRect(px*j,px*i,px,px);
-                        }
-                    }
-                }
-
-            }*/
-           /* function canvasWrite(qf, width) {//SVG渲染方式
-
-                console.time('渲染用时');
-                var size = 300,qrSvg='';
-
-                var px=size/width;
-                px = Math.round(px);
-
-                qrSvg += '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"  width="300" height="300">';
-
-                for (var i = 0; i < width; i++ ) {
-                    for (var j = 0; j < width; j++) {
-                        if (qf[i*width+j]  ) {
-                            qrSvg +='<rect x='+'\"'+px*j+'\"'+'y='+'\"'+px*i+'\"'+'width='+'\"'+px+'\"'+'height='+'\"'+px+'\"'+'fill="black"/>';
-                        }
-                    }
-                }
-                qrSvg += '</svg>';
-                document.getElementById("code").innerHTML=qrSvg;
-
-            }*/
-
-
-            console.timeEnd('总共用时');
-        };
-
-
-    }
-
+<script type = "text/javascript" src = "./js/sha3.js"></script>
+<script type = "text/javascript" charset = "utf-8">
+	//二维码详细信息
+	var qrUrl = document.getElementById("qrUrl");//具体内容(节点)
+	var qrecclevel = document.getElementById("ecclevel");//纠错等级
+	function utf16to8(str){// 中文编码问题
+		var out, i, len, c;
+		out = "";
+		len = str.length;
+		for (i = 0; i < len; i++) {
+			c = str.charCodeAt(i);
+			if ((c >= 0x0001) && (c <= 0x007F)) {
+				out += str.charAt(i);
+			} else if (c > 0x07FF) {
+				out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+				out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+				out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+			} else {
+				out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+				out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+			}
+		}
+		return out;
+	}
+	function createQR(){//生成二维码方法
+		console.time('总共用时');
+		console.time('实例时间');
+		var worker = new Worker("webworkerqr.js");//实例化一个worker 对象
+		console.timeEnd('实例时间');
+		var pre = {};
+		pre.url = utf16to8(qrUrl.value);//具体内容(从节点取值)
+		pre.ecclevel = qrecclevel.value;//输出纠错类型
+		pre.time1 = new Date();
+		pre.id = getOnlyId();//获取ID
+		pre.has1 = hash(pre.id + pre.url) //id+ content生成第一个hash
+		pre.has2 = hash(pre.id + pre.has1) //id+ has1生成第二个hash
+		setHash(pre)// setHash id 和 hash2 都存到以太坊
+		console.log("hash1 :" + pre.has1);
+		console.log('hash2 :' + pre.has2);
+		worker.postMessage(pre);
+		worker.onmessage = function (e){//主线程接受数据，渲染二维码
+			var width = Math.sqrt(e.data.length);
+			var qf = e.data;
+			canvasWrite(qf, width);   //canvas 渲染，用主线程
+			document.getElementById("code").innerHTML = qf;
+			function canvasWrite(qf, width){//CAnvas渲染方式
+				console.time('渲染用时');
+				//设置画布
+				var size = 300;
+				var qrc = document.getElementById("code").getContext("2d");
+				qrc.canvas.width = qrc.canvas.height = size;
+				var px = size / width;
+				px = Math.round(px);
+				for (var i = 0; i < width; i++) {
+					for (var j = 0; j < width; j++) {
+						if (qf[i * width + j]) {
+							qrc.fillRect(px * j, px * i, px, px);
+						}
+					}
+				}
+			}
+			console.timeEnd('总共用时');
+		};
+		function getOnlyId(){
+			// 获取唯一分1配的ID  以123为例
+			/*...
+			... do something
+			...*/
+			var id = 123;
+			return id
+		}
+		function setHash(e){
+			// setHash id 和 hash2 都存到以太坊
+			var id = e.id;
+			var hash1 = e.hash1;
+			var hash2 = e.hash2;
+			/*...
+			... do something
+			...*/
+			return false
+		}
+		function hash(str){ //hash生成算法，算法种类很多很多，以hash3-224为例，不同hash算法分别引用不同的js文件。
+			//see more : https://github.com/Caligatio/jsSHA
+			var hashobj = new jsSHA("SHA3-224", "TEXT");
+			//SHA-1, SHA-224, SHA3-224, SHA-256, SHA3-256, SHA-384, SHA3-384, SHA-512, SHA3-512, SHAKE128, and SHAKE256
+			hashobj.setHMACKey(str, "TEXT");
+			// hash.update("test");
+			var hash = hashobj.getHMAC("HEX");
+			return hash
+		}
+		function hash1(){//id+content 生成第一个hash
+		}
+	}
 </script>
 </html>
