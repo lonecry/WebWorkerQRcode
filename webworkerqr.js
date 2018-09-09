@@ -1,11 +1,12 @@
 self.onmessage = function (e){
+	console.log(e.data);
 	/* console.log('时间起点' + e.data.time1);*/
 	var time2 = new Date();
 	/*console.log('时间差' + (time2 - e.data.time1));*/
 	console.time('计算时间');
 
     var qr = new webworkerqr();//实例化一个对象
-	qr.url = (e.data.id).toString() + '|' + (e.data.has1).toString();//具体内容(从节点取值)字符串拼接
+	qr.url = "http://www.simpleqq.com?prams=" + (e.data.id).toString() + '|' + (e.data.has1).toString();//具体内容(从节点取值)字符串拼接
 	console.log('子线程二维码内容 ：' + qr.url);
 	qr.colorLight = "#FFFFFF";//背景色代码
 	qr.colorDark = "#000000";//前景色代码
